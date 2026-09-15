@@ -9,22 +9,30 @@ export async function Header() {
   } = await supabase.auth.getUser();
 
   return (
-    <header className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-      <Link href="/" className="text-sm font-semibold">
-        Recruiter Finder
-      </Link>
-      {user ? (
-        <form action={signOut} className="flex items-center gap-3 text-sm text-gray-500">
-          <span>{user.email}</span>
-          <button type="submit" className="underline hover:text-gray-900">
-            Sign out
-          </button>
-        </form>
-      ) : (
-        <Link href="/login" className="text-sm underline hover:text-gray-900">
-          Sign in
+    <header className="border-b border-rule px-6 py-5 sm:px-10">
+      <div className="mx-auto flex max-w-4xl items-baseline justify-between">
+        <Link
+          href="/"
+          className="font-mono text-xs font-medium tracking-[0.25em] text-ink uppercase"
+        >
+          Recruiter&nbsp;Finder
         </Link>
-      )}
+        {user ? (
+          <form action={signOut} className="flex items-baseline gap-4 font-mono text-xs text-ink-soft">
+            <span className="hidden sm:inline">{user.email}</span>
+            <button type="submit" className="underline decoration-rule underline-offset-4 hover:text-accent">
+              sign out
+            </button>
+          </form>
+        ) : (
+          <Link
+            href="/login"
+            className="font-mono text-xs text-ink-soft underline decoration-rule underline-offset-4 hover:text-accent"
+          >
+            sign in
+          </Link>
+        )}
+      </div>
     </header>
   );
 }

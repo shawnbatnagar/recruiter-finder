@@ -1,26 +1,58 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+  Design concept: "field index" -- a card-catalog / campus-directory feel
+  rather than a generic SaaS look. Warm paper background, ink instead of
+  pure black/gray, one deliberate accent (rust), serif for reading text,
+  monospace reserved for all interactive chrome (labels, buttons, tags,
+  counters) so the two typefaces read as distinct registers -- prose vs.
+  interface -- the way an actual printed index card would.
+*/
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+:root {
+  --color-paper: #f6f3ec;
+  --color-paper-dim: #eee9dc;
+  --color-ink: #1c1b18;
+  --color-ink-soft: #58534a;
+  --color-rule: #d5cdb9;
+  --color-accent: #a8431f;
+  --color-accent-ink: #7c3116;
+  --color-positive: #3f6b4a;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --color-paper: #17160f;
+    --color-paper-dim: #201e16;
+    --color-ink: #ece5d3;
+    --color-ink-soft: #b6ad98;
+    --color-rule: #3d372a;
+    --color-accent: #e08a5c;
+    --color-accent-ink: #f2a679;
+    --color-positive: #74a67f;
   }
 }
 
+@theme inline {
+  --color-paper: var(--color-paper);
+  --color-paper-dim: var(--color-paper-dim);
+  --color-ink: var(--color-ink);
+  --color-ink-soft: var(--color-ink-soft);
+  --color-rule: var(--color-rule);
+  --color-accent: var(--color-accent);
+  --color-accent-ink: var(--color-accent-ink);
+  --color-positive: var(--color-positive);
+  --font-display: var(--font-source-serif);
+  --font-mono: var(--font-plex-mono);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-display), Georgia, serif;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-paper);
 }
