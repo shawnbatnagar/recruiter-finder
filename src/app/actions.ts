@@ -82,52 +82,55 @@ export async function submitContact(
   return { error: null };
 }
 
+// These three are only rendered as forms once the page has already
+// confirmed the user is signed in, so failures here are rare (an expired
+// session, or RLS rejecting a malformed id). They're used directly as
+// bound <form action> handlers, which requires a void-returning signature,
+// so on failure we just leave state unchanged rather than surfacing an
+// error UI for what should be a one-click interaction.
+
 export async function voteContact(
   contactId: string,
   companyId: string,
   value: 1 | -1,
-): Promise<ActionResult> {
+): Promise<void> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { error: "Sign in to vote." };
+  if (!user) return;
 
-  const { error } = await supabase
+  await supabase
     .from("contact_votes")
     .upsert(
       { contact_id: contactId, user_id: user.id, value },
       { onConflict: "contact_id,user_id" },
     );
 
-  if (error) return { error: error.message };
-
   revalidatePath(`/company/${companyId}`);
-  return { error: null };
 }
 
 export async function flagContact(
   contactId: string,
   companyId: string,
-  reason: string,
-): Promise<ActionResult> {
+  formData: FormData,
+): Promise<void> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { error: "Sign in to flag a contact." };
+  if (!user) return;
 
-  const { error } = await supabase
+  const reason = String(formData.get("reason") ?? "").trim() || null;
+
+  await supabase
     .from("contact_flags")
     .upsert(
-      { contact_id: contactId, user_id: user.id, reason: reason.trim() || null },
+      { contact_id: contactId, user_id: user.id, reason },
       { onConflict: "contact_id,user_id" },
     );
 
-  if (error) return { error: error.message };
-
   revalidatePath(`/company/${companyId}`);
-  return { error: null };
 }
 
 export async function signOut(): Promise<void> {
@@ -137,22 +140,19 @@ export async function signOut(): Promise<void> {
   redirect("/");
 }
 
-export async function requestCompanyContact(companyId: string): Promise<ActionResult> {
+export async function requestCompanyContact(companyId: string): Promise<void> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { error: "Sign in to flag that this company needs a contact." };
+  if (!user) return;
 
-  const { error } = await supabase
+  await supabase
     .from("company_requests")
     .upsert(
       { company_id: companyId, user_id: user.id },
       { onConflict: "company_id,user_id" },
     );
 
-  if (error) return { error: error.message };
-
   revalidatePath(`/company/${companyId}`);
-  return { error: null };
 }
